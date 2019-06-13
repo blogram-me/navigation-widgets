@@ -1,6 +1,8 @@
 package com.github.programmerr47.navigation;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +17,6 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation.OnTabSelectedListener;
 import com.github.programmerr47.navigation.NavigationIcons.NavigationIcon;
 import com.github.programmerr47.navigation.layoutfactory.DummyLayoutFactory;
-import com.github.programmerr47.navigation.layoutfactory.LayoutFactory;
 import com.github.programmerr47.navigation.menu.MenuActions;
 
 import static android.view.View.GONE;
@@ -25,8 +26,6 @@ import static com.github.programmerr47.navigation.AndroidUtils.bind;
 import static com.github.programmerr47.navigation.NavigationBuilder.NO_NAV_ICON;
 
 public abstract class NavigationFragment extends Fragment implements OnTabSelectedListener {
-    private static final LayoutFactory DUMMY_FACTORY = new DummyLayoutFactory(null);
-
     private NavigationBuilder<?> navigationBuilder;
 
     protected Toolbar toolbar;
@@ -34,16 +33,32 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         navigationBuilder = buildNavigation();
         return navigationBuilder.layoutFactory().produceLayout(inflater, container);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        toolbar = bind(view, navigationBuilder.toolbarId);
-        bottomNavigation = bind(view, navigationBuilder.bottomBarId);
+    @CallSuper
+    public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState) {
+        if (view != null) {
+            toolbar = bind(view, navigationBuilder.toolbarId);
+            bottomNavigation = bind(view, navigationBuilder.bottomBarId);
+        } else {
+            toolbar = null;
+            bottomNavigation = null;
+        }
+
         prepareNavigation();
+    }
+
+    @Override
+    @CallSuper
+    public void onDestroyView() {
+        super.onDestroyView();
+        navigationBuilder = null;
+        toolbar = null;
+        bottomNavigation = null;
     }
 
     protected void invalidateNavigation(NavigationBuilder newNavigation) {
@@ -117,7 +132,8 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        Animation result = new Animation() {};
+        Animation result = new Animation() {
+        };
         result.setDuration(0);
         return result;
     }
@@ -145,6 +161,6 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
     }
 
     protected NavigationBuilder buildNavigation() {
-        return new CustomLayoutNavigationBuilder(DUMMY_FACTORY);
+        return new CustomLayoutNavigationBuilder(new DummyLayoutFactory(null));
     }
 }

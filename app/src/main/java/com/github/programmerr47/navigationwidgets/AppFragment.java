@@ -5,13 +5,10 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.programmerr47.navigation.AutoLayoutNavigationBuilder;
 import com.github.programmerr47.navigation.NavigationBuilder;
 import com.github.programmerr47.navigation.NavigationFragment;
 import com.github.programmerr47.navigation.menu.MenuAction;
 import com.github.programmerr47.navigation.menu.MenuActions;
-
-import java.util.Random;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.github.programmerr47.navigation.AutoLayoutNavigationBuilder.navigation;
@@ -28,7 +25,6 @@ import static com.github.programmerr47.navigationwidgets.constants.NavigationIte
 import static com.github.programmerr47.navigationwidgets.constants.NavigationItemType.SEARCH;
 
 public final class AppFragment extends NavigationFragment {
-    private static final Random rand = new Random();
     private static final MenuActions globalMenuActions = buildGlobalActions();
 
     @Override
