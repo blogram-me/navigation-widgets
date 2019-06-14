@@ -27,7 +27,7 @@ public class AppApplication extends Application {
         appContext = this;
 
         initDefaults(new NavigationDefaults()
-                .navigationIcon(BACK, R.drawable.arrow_left)
+                .navigationIcon(BACK, R.drawable.ic_action_back)
                 .navigationIcon(CLOSE, R.drawable.close)
                 .navigationIcon(ENTER, R.drawable.subdirectory_arrow_left)
                 .navigationIcon(UP, R.drawable.arrow_up)

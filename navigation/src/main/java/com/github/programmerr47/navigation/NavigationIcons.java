@@ -5,13 +5,11 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static android.support.graphics.drawable.VectorDrawableCompat.create;
 import static android.support.v4.graphics.drawable.DrawableCompat.setTint;
 import static com.github.programmerr47.navigation.AndroidUtils.color;
 
@@ -67,10 +65,11 @@ public class NavigationIcons extends ArrayList<NavigationIcons.NavigationIcon> {
             if (drawable != null) {
                 return drawable;
             } else {
-                VectorDrawableCompat navIcon = create(context.getResources(), drawableRes, context.getTheme());
+                Drawable navIcon = ContextCompat.getDrawable(context, drawableRes);
                 setTint(navIcon, color(context, android.R.color.white));
                 return navIcon;
             }
         }
+
     }
 }
