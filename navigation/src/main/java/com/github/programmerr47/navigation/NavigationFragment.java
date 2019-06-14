@@ -41,7 +41,7 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
     @Override
     @CallSuper
     public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState) {
-        if (view != null) {
+        if (view != null && navigationBuilder != null) {
             toolbar = bind(view, navigationBuilder.toolbarId);
             bottomNavigation = bind(view, navigationBuilder.bottomBarId);
         } else {
