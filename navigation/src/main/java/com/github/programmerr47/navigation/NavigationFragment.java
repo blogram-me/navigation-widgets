@@ -1,23 +1,43 @@
 package com.github.programmerr47.navigation;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.view.menu.ListMenuItemView;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.view.menu.MenuPresenter;
+import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.MenuPopupWindow;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation.OnTabSelectedListener;
 import com.github.programmerr47.navigation.NavigationIcons.NavigationIcon;
 import com.github.programmerr47.navigation.layoutfactory.DummyLayoutFactory;
 import com.github.programmerr47.navigation.menu.MenuActions;
+
+import java.lang.reflect.Field;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -30,6 +50,7 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
 
     protected Toolbar toolbar;
     protected AHBottomNavigation bottomNavigation;
+    protected RtlToolbarHandler rtlToolbarHandler;
 
     @Nullable
     @Override
@@ -59,6 +80,11 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
         navigationBuilder = null;
         toolbar = null;
         bottomNavigation = null;
+
+        if (rtlToolbarHandler != null) {
+            rtlToolbarHandler.stop();
+            rtlToolbarHandler = null;
+        }
     }
 
     protected void invalidateNavigation(NavigationBuilder newNavigation) {
@@ -76,7 +102,8 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
         }
     }
 
-    protected void prepareToolbar(Toolbar toolbar) {
+    @SuppressLint("RestrictedApi")
+    protected void prepareToolbar(final Toolbar toolbar) {
         if (navigationBuilder.toolbarTitleRes != 0) {
             toolbar.setTitle(navigationBuilder.toolbarTitleRes);
         } else {
@@ -101,6 +128,7 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
             toolbar.setNavigationOnClickListener(navigationBuilder.navigationDefaults().navigationIconListener());
         }
 
+        rtlToolbarHandler = RtlToolbarHandler.with(toolbar).start();
 
         Menu menu = toolbar.getMenu();
         if (menu != null) {
@@ -111,6 +139,11 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
             for (Integer menuRes : navigationBuilder.menuRes) {
                 toolbar.inflateMenu(menuRes);
             }
+
+            if (menu instanceof MenuBuilder) {
+                ((MenuBuilder) menu).setOptionalIconsVisible(true);
+            }
+
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {

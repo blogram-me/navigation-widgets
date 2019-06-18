@@ -7,30 +7,36 @@
         android:id="@+id/up"
         android:title="@string/menu.up"
         android:icon="@drawable/arrow_up"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always">
 
-    <item
-        android:id="@+id/search"
-        android:title="@string/menu.search"
-        android:icon="@drawable/magnify"
-        app:showAsAction="ifRoom"/>x
+        <menu>
 
-    <item
-        android:id="@+id/back"
-        android:title="@string/menu.back"
-        android:icon="@drawable/arrow_left"
-        app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/search"
+                android:title="@string/menu.search"
+                android:icon="@drawable/magnify"
+                app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/down"
-        android:title="@string/menu.down"
-        android:icon="@drawable/arrow_down"
-        app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/back"
+                android:title="@string/menu.back"
+                android:icon="@drawable/arrow_left"
+                app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/messages"
-        android:title="@string/menu.messages"
-        android:icon="@drawable/message_text"
-        app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/down"
+                android:title="@string/menu.down"
+                android:icon="@drawable/arrow_down"
+                app:showAsAction="ifRoom"/>
+
+            <item
+                android:id="@+id/messages"
+                android:title="@string/menu.messages"
+                android:icon="@drawable/message_text"
+                app:showAsAction="ifRoom"/>
+
+        </menu>
+
+    </item>
 
 </menu>
