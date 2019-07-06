@@ -65,7 +65,7 @@ class RtlToolbarHandler {
 
             @Override
             public boolean onOpenSubMenu(MenuBuilder menuBuilder) {
-                checkRlViews();
+                checkViewsMargin();
                 return false;
             }
         }, null);
@@ -89,11 +89,7 @@ class RtlToolbarHandler {
         }
     }
 
-    private void checkRlViews() {
-        if (!toolbarIsRtl) {
-            return;
-        }
-
+    private void checkViewsMargin() {
         toolbarHandler.postDelayed(new Runnable() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -114,7 +110,7 @@ class RtlToolbarHandler {
 
                     listView.setOnScrollListener(onScrollListener);
                 } else {
-                    checkRlViews();
+                    checkViewsMargin();
                 }
             }
         }, 50);
@@ -122,22 +118,22 @@ class RtlToolbarHandler {
 
     private ListView getListView() {
         try {
-            Field field = toolbar.getClass().getDeclaredField("mMenuView");
-            field.setAccessible(true);
+            Field mMenuViewField = toolbar.getClass().getDeclaredField("mMenuView");
+            mMenuViewField.setAccessible(true);
 
-            ActionMenuView actionMenuView = (ActionMenuView) field.get(toolbar);
+            ActionMenuView actionMenuView = (ActionMenuView) mMenuViewField.get(toolbar);
 
-            Field field1 = actionMenuView.getClass().getDeclaredField("mPresenter");
-            field1.setAccessible(true);
-            Object mPresenter = field1.get(actionMenuView);
+            Field mPresenterField = actionMenuView.getClass().getDeclaredField("mPresenter");
+            mPresenterField.setAccessible(true);
+            Object mPresenter = mPresenterField.get(actionMenuView);
 
-            Field field2 = mPresenter.getClass().getDeclaredField("mActionButtonPopup");
-            field2.setAccessible(true);
-            Field field3 = mPresenter.getClass().getDeclaredField("mOverflowPopup");
-            field3.setAccessible(true);
+            Field mActionButtonPopupField = mPresenter.getClass().getDeclaredField("mActionButtonPopup");
+            mActionButtonPopupField.setAccessible(true);
+            Field mOverflowPopupField = mPresenter.getClass().getDeclaredField("mOverflowPopup");
+            mOverflowPopupField.setAccessible(true);
 
-            MenuPopupHelper menuPopupHelper1 = (MenuPopupHelper) field2.get(mPresenter);
-            MenuPopupHelper menuPopupHelper2 = (MenuPopupHelper) field3.get(mPresenter);
+            MenuPopupHelper menuPopupHelper1 = (MenuPopupHelper) mActionButtonPopupField.get(mPresenter);
+            MenuPopupHelper menuPopupHelper2 = (MenuPopupHelper) mOverflowPopupField.get(mPresenter);
 
             MenuPopupHelper menuPopupHelper = null;
 
@@ -148,23 +144,23 @@ class RtlToolbarHandler {
             }
 
             if (menuPopupHelper != null) {
-                Field field4 = menuPopupHelper.getClass().getSuperclass().getDeclaredField("mPopup");
-                field4.setAccessible(true);
+                Field mPopupField = menuPopupHelper.getClass().getSuperclass().getDeclaredField("mPopup");
+                mPopupField.setAccessible(true);
 
-                Object popup = field4.get(menuPopupHelper);
-                Field field5 = popup.getClass().getDeclaredField("mPopup");
-                field5.setAccessible(true);
+                Object mPopup = mPopupField.get(menuPopupHelper);
+                Field mPopupField2 = mPopup.getClass().getDeclaredField("mPopup");
+                mPopupField2.setAccessible(true);
 
-                MenuPopupWindow mPopup = (MenuPopupWindow) field5.get(popup);
+                MenuPopupWindow mPopup2 = (MenuPopupWindow) mPopupField2.get(mPopup);
 
-                Field field6 = mPopup.getClass().getSuperclass().getDeclaredField("mAdapter");
-                field6.setAccessible(true);
+                Field mAdapterField = mPopup2.getClass().getSuperclass().getDeclaredField("mAdapter");
+                mAdapterField.setAccessible(true);
 
-                Field field7 = mPopup.getClass().getSuperclass().getDeclaredField("mDropDownList");
-                field7.setAccessible(true);
+                Field mDropDownListField = mPopup2.getClass().getSuperclass().getDeclaredField("mDropDownList");
+                mDropDownListField.setAccessible(true);
 
-//                        MenuAdapter menuAdapter = (MenuAdapter) field6.get(mPopup);
-                return (ListView) field7.get(mPopup);
+//                        MenuAdapter menuAdapter = (MenuAdapter) mAdapterField.get(mPopup);
+                return (ListView) mDropDownListField.get(mPopup2);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -183,7 +179,7 @@ class RtlToolbarHandler {
         scrollRunnable = new Runnable() {
             @Override
             public void run() {
-                checkRtlViews(listView, firstVisibleItem, visibleItemCount, totalItemCount);
+                checkViewsMargin(listView, firstVisibleItem, visibleItemCount, totalItemCount);
                 removeScrollRunnable();
             }
         };
@@ -196,7 +192,7 @@ class RtlToolbarHandler {
         scrollRunnable = null;
     }
 
-    private void checkRtlViews(ListView listView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    private void checkViewsMargin(ListView listView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         ListAdapter adapter = listView.getAdapter();
 
         if (adapter != null) {
@@ -210,8 +206,18 @@ class RtlToolbarHandler {
 
                     LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, currentHeight);
                     iconLp.gravity = Gravity.CENTER_VERTICAL;
+
+                    int marginLeft = (int) (toolbar.getResources().getDisplayMetrics().density * 16);
+                    int marginRight = (int) (toolbar.getResources().getDisplayMetrics().density * -8);
                     int margin = (int) (toolbar.getResources().getDisplayMetrics().density * 8);
-                    iconLp.setMargins(-margin, margin, margin, margin);
+
+                    if (toolbarIsRtl) {
+                        int marginLeftBeforeChange = marginLeft;
+                        marginLeft = marginRight;
+                        marginRight = marginLeftBeforeChange;
+                    }
+
+                    iconLp.setMargins(marginLeft, margin, marginRight, margin);
                     icon.setLayoutParams(iconLp);
                 }
 
