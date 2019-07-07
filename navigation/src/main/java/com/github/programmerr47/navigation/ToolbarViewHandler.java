@@ -23,25 +23,33 @@ import android.widget.ListView;
 
 import java.lang.reflect.Field;
 
-class RtlToolbarHandler {
+class ToolbarViewHandler {
 
     private final Toolbar toolbar;
     private final Handler toolbarHandler;
     private boolean toolbarIsRtl;
     private AbsListView.OnScrollListener onScrollListener;
     private Runnable scrollRunnable;
+    private boolean stopped;
+    private int mMaxTries;
+    private int currentTry;
 
-    private RtlToolbarHandler(Toolbar toolbar) {
+    private ToolbarViewHandler(Toolbar toolbar, int maxTries) {
+        this.mMaxTries = maxTries;
         this.toolbar = toolbar;
         toolbarHandler = new Handler(Looper.getMainLooper());
     }
 
-    static RtlToolbarHandler with(Toolbar toolbar) {
-        return new RtlToolbarHandler(toolbar);
+    static ToolbarViewHandler with(Toolbar toolbar) {
+        return with(toolbar, 10);
+    }
+
+    static ToolbarViewHandler with(Toolbar toolbar, int maxTries) {
+        return new ToolbarViewHandler(toolbar, maxTries);
     }
 
     @SuppressLint("RestrictedApi")
-    RtlToolbarHandler start() {
+    ToolbarViewHandler start() {
         toolbar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -60,11 +68,12 @@ class RtlToolbarHandler {
         toolbar.setMenuCallbacks(new MenuPresenter.Callback() {
             @Override
             public void onCloseMenu(MenuBuilder menuBuilder, boolean b) {
-                removeScrollListener();
+                stop();
             }
 
             @Override
             public boolean onOpenSubMenu(MenuBuilder menuBuilder) {
+                stopped = false;
                 checkViewsMargin();
                 return false;
             }
@@ -74,6 +83,8 @@ class RtlToolbarHandler {
     }
 
     void stop() {
+        stopped = true;
+        currentTry = 0;
         toolbarHandler.removeCallbacksAndMessages(null);
         scrollRunnable = null;
         removeScrollListener();
@@ -90,32 +101,42 @@ class RtlToolbarHandler {
     }
 
     private void checkViewsMargin() {
-        toolbarHandler.postDelayed(new Runnable() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void run() {
-                ListView listView = getListView();
+        if (currentTry > mMaxTries) {
+            stop();
+            return;
+        }
 
-                if (listView != null) {
-                    onScrollListener = new AbsListView.OnScrollListener() {
-                        @Override
-                        public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        }
+        if (!stopped) {
+            currentTry++;
 
-                        @Override
-                        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                            popupOnScroll((ListView) view, firstVisibleItem, visibleItemCount, totalItemCount);
-                        }
-                    };
+            toolbarHandler.postDelayed(new Runnable() {
+                @SuppressLint("RestrictedApi")
+                @Override
+                public void run() {
+                    ListView listView = getListView();
 
-                    listView.setOnScrollListener(onScrollListener);
-                } else {
-                    checkViewsMargin();
+                    if (listView != null) {
+                        onScrollListener = new AbsListView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                            }
+
+                            @Override
+                            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                                popupOnScroll((ListView) view, firstVisibleItem, visibleItemCount, totalItemCount);
+                            }
+                        };
+
+                        listView.setOnScrollListener(onScrollListener);
+                    } else {
+                        checkViewsMargin();
+                    }
                 }
-            }
-        }, 50);
+            }, 50);
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     private ListView getListView() {
         try {
             Field mMenuViewField = toolbar.getClass().getDeclaredField("mMenuView");
@@ -153,14 +174,19 @@ class RtlToolbarHandler {
 
                 MenuPopupWindow mPopup2 = (MenuPopupWindow) mPopupField2.get(mPopup);
 
-                Field mAdapterField = mPopup2.getClass().getSuperclass().getDeclaredField("mAdapter");
-                mAdapterField.setAccessible(true);
+//                Field mAdapterField = mPopup2.getClass().getSuperclass().getDeclaredField("mAdapter");
+//                mAdapterField.setAccessible(true);
 
-                Field mDropDownListField = mPopup2.getClass().getSuperclass().getDeclaredField("mDropDownList");
-                mDropDownListField.setAccessible(true);
+//                Field mDropDownListField = mPopup2.getClass().getSuperclass().getDeclaredField("mDropDownList");
+//                mDropDownListField.setAccessible(true);
 
 //                        MenuAdapter menuAdapter = (MenuAdapter) mAdapterField.get(mPopup);
-                return (ListView) mDropDownListField.get(mPopup2);
+
+                if (mPopup2 != null) {
+                    return menuPopupHelper.getListView();
+                } else {
+                    return null;
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

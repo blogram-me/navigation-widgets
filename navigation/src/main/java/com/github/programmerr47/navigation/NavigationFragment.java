@@ -32,7 +32,7 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
 
     protected Toolbar toolbar;
     protected AHBottomNavigation bottomNavigation;
-    protected RtlToolbarHandler rtlToolbarHandler;
+    protected ToolbarViewHandler rtlToolbarHandler;
 
     @Nullable
     @Override
@@ -110,7 +110,7 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
             toolbar.setNavigationOnClickListener(navigationBuilder.navigationDefaults().navigationIconListener());
         }
 
-        rtlToolbarHandler = RtlToolbarHandler.with(toolbar).start();
+        rtlToolbarHandler = ToolbarViewHandler.with(toolbar).start();
 
         Menu menu = toolbar.getMenu();
         if (menu != null) {
