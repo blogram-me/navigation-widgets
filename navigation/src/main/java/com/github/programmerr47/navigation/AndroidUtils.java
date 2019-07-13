@@ -2,10 +2,10 @@ package com.github.programmerr47.navigation;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 

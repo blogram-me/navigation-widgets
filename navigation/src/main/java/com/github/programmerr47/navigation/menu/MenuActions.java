@@ -1,6 +1,6 @@
 package com.github.programmerr47.navigation.menu;
 
-import android.support.v7.widget.PopupMenu;
+import androidx.appcompat.widget.PopupMenu;
 import android.util.SparseArray;
 import android.view.MenuItem;
 

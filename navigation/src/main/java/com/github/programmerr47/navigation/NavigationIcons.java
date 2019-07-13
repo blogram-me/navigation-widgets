@@ -2,15 +2,15 @@ package com.github.programmerr47.navigation;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static android.support.v4.graphics.drawable.DrawableCompat.setTint;
+import static androidx.core.graphics.drawable.DrawableCompat.setTint;
 import static com.github.programmerr47.navigation.AndroidUtils.color;
 
 public class NavigationIcons extends ArrayList<NavigationIcons.NavigationIcon> {

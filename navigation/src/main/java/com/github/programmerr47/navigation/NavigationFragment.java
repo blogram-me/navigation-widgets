@@ -2,14 +2,16 @@ package com.github.programmerr47.navigation;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.view.SupportMenuInflater;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation.OnTabSelectedListen
 import com.github.programmerr47.navigation.NavigationIcons.NavigationIcon;
 import com.github.programmerr47.navigation.layoutfactory.DummyLayoutFactory;
 import com.github.programmerr47.navigation.menu.MenuActions;
+import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -116,10 +119,13 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
         if (menu != null) {
             menu.clear();
         }
+
         if (!navigationBuilder.menuRes.isEmpty()) {
             final MenuActions actions = navigationBuilder.menuActions.build();
             for (Integer menuRes : navigationBuilder.menuRes) {
-                toolbar.inflateMenu(menuRes);
+//                toolbar.inflateMenu(menuRes);
+                // IconicsMenuInflaterUtil will show Iconics icons
+                IconicsMenuInflaterUtil.inflate(getMenuInflater(), toolbar.getContext(), menuRes, toolbar.getMenu());
             }
 
             if (menu instanceof MenuBuilder) {
@@ -133,6 +139,11 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
                 }
             });
         }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private MenuInflater getMenuInflater() {
+        return new SupportMenuInflater(toolbar.getContext());
     }
 
     protected void prepareBottomNavigation(AHBottomNavigation bottomNavigation) {

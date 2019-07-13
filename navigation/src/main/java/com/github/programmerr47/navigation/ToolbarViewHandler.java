@@ -4,14 +4,14 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.view.menu.ListMenuItemView;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
-import android.support.v7.view.menu.MenuPresenter;
-import android.support.v7.widget.ActionMenuView;
-import android.support.v7.widget.MenuPopupWindow;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.view.menu.ListMenuItemView;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.view.menu.MenuPresenter;
+import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.MenuPopupWindow;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -226,7 +226,7 @@ class ToolbarViewHandler {
                 ListMenuItemView child = (ListMenuItemView) getViewByPosition(i, listView);
 
                 if (child != null) {
-                    ImageView icon = child.findViewById(android.support.v7.appcompat.R.id.icon);
+                    ImageView icon = child.findViewById(androidx.appcompat.R.id.icon);
 
                     int currentHeight = icon.getLayoutParams().height;
 

@@ -1,20 +1,20 @@
--keepclassmembers class android.support.v7.widget.Toolbar {
+-keepclassmembers class androidx.appcompat.widget.Toolbar {
     private *** mMenuView;
  }
 
--keepclassmembers class android.support.v7.widget.ActionMenuView {
+-keepclassmembers class androidx.appcompat.widget.ActionMenuView {
      private *** mPresenter;
  }
 
--keepclassmembers class android.support.v7.widget.ActionMenuPresenter {
+-keepclassmembers class androidx.appcompat.widget.ActionMenuPresenter {
      *** mActionButtonPopup;
      *** mOverflowPopup;
 }
 
--keepclassmembers class android.support.v7.view.menu.MenuPopupHelper {
+-keepclassmembers class androidx.appcompat.view.menu.MenuPopupHelper {
     private *** mPopup;
 }
 
--keepclassmembers class android.support.v7.view.menu.StandardMenuPopup {
+-keepclassmembers class androidx.appcompat.view.menu.StandardMenuPopup {
     *** mPopup;
 }
