@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // true for enable (iconics library)'s provider to provide context for itself.
+    <bool name="is_iconics_content_provider_enabled">true</bool>
+</resources>

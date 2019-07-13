@@ -123,9 +123,9 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
         if (!navigationBuilder.menuRes.isEmpty()) {
             final MenuActions actions = navigationBuilder.menuActions.build();
             for (Integer menuRes : navigationBuilder.menuRes) {
-//                toolbar.inflateMenu(menuRes);
+                toolbar.inflateMenu(menuRes);
                 // IconicsMenuInflaterUtil will show Iconics icons
-                IconicsMenuInflaterUtil.inflate(getMenuInflater(), toolbar.getContext(), menuRes, toolbar.getMenu());
+                IconicsMenuInflaterUtil.parseXmlAndSetIconicsDrawables(toolbar.getContext(), menuRes, toolbar.getMenu(), true);
             }
 
             if (menu instanceof MenuBuilder) {
