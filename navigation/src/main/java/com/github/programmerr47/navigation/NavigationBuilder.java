@@ -5,9 +5,6 @@ import android.graphics.drawable.Drawable;
 import com.github.programmerr47.navigation.layoutfactory.LayoutFactory;
 import com.github.programmerr47.navigation.menu.MenuActions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class NavigationBuilder<T extends NavigationBuilder<T>> {
     public static final int NO_NAV_ICON = -1;
 
@@ -26,7 +23,7 @@ public abstract class NavigationBuilder<T extends NavigationBuilder<T>> {
     int toolbarLogoRes;
     Drawable toolbarLogo;
 
-    List<Integer> menuRes = new ArrayList<>();
+    int menuRes = -1;
     MenuActions.Builder menuActions = new MenuActions.Builder();
 
     public NavigationBuilder(LayoutFactory layoutFactory, NavigationDefaults navigationDefaults) {
@@ -100,13 +97,13 @@ public abstract class NavigationBuilder<T extends NavigationBuilder<T>> {
     }
 
     public T menuRes(int menuRes, MenuActions.Builder menuBuilder) {
-        this.menuRes.add(menuRes);
+        this.menuRes = menuRes;
         this.menuActions.append(menuBuilder);
         return getThis();
     }
 
     public T menuRes(int menuRes, MenuActions menuActions) {
-        this.menuRes.add(menuRes);
+        this.menuRes = menuRes;
         this.menuActions.append(menuActions);
         return getThis();
     }
