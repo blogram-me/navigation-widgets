@@ -2,17 +2,17 @@ package com.github.programmerr47.navigation;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.view.SupportMenuInflater;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -22,7 +22,8 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation.OnTabSelectedListen
 import com.github.programmerr47.navigation.NavigationIcons.NavigationIcon;
 import com.github.programmerr47.navigation.layoutfactory.DummyLayoutFactory;
 import com.github.programmerr47.navigation.menu.MenuActions;
-import com.mikepenz.iconics.utils.IconicsMenuInflaterUtil;
+import com.github.programmerr47.navigation.toolbar.NavigationToolbar;
+import com.hadi.menu.overflow.OverFlowMenu;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -120,24 +121,29 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
             menu.clear();
         }
 
-        if (!navigationBuilder.menuRes.isEmpty()) {
+        if (navigationBuilder.menuRes != -1) {
             final MenuActions actions = navigationBuilder.menuActions.build();
-            for (Integer menuRes : navigationBuilder.menuRes) {
-                toolbar.inflateMenu(menuRes);
-                // IconicsMenuInflaterUtil will show Iconics icons
-                IconicsMenuInflaterUtil.parseXmlAndSetIconicsDrawables(toolbar.getContext(), menuRes, toolbar.getMenu(), true);
-            }
+            toolbar.inflateMenu(navigationBuilder.menuRes);
 
-            if (menu instanceof MenuBuilder) {
-                ((MenuBuilder) menu).setOptionalIconsVisible(true);
+            try {
+                NavigationToolbar.findOverflowView(toolbar)
+                        .setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        final OverFlowMenu overFlowMenu = OverFlowMenu.createDefaultMenu(toolbar.getContext(), navigationBuilder.menuRes);
+                                        overFlowMenu.setOnMenuItemClickListener(new OverFlowMenu.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(int i) {
+                                                actions.onItemClick(i);
+                                            }
+                                        }).show(v);
+                                    }
+                                }
+                        );
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return actions.onMenuItemClick(item);
-                }
-            });
         }
     }
 
