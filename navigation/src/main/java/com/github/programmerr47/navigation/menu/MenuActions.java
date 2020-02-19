@@ -1,10 +1,10 @@
 package com.github.programmerr47.navigation.menu;
 
-import androidx.appcompat.widget.PopupMenu;
 import android.util.SparseArray;
-import android.view.MenuItem;
 
-public final class MenuActions implements PopupMenu.OnMenuItemClickListener {
+import com.hadi.menu.overflow.OverFlowMenu;
+
+public final class MenuActions implements OverFlowMenu.OnItemClickListener {
     private static final MenuAction DUMMY = new SimpleMenuAction();
     private final SparseArray<MenuAction> actions;
 
@@ -13,10 +13,8 @@ public final class MenuActions implements PopupMenu.OnMenuItemClickListener {
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        int itemId = item.getItemId();
+    public void onItemClick(int itemId) {
         actions.get(itemId, DUMMY).execute();
-        return actions.indexOfKey(itemId) > 0;
     }
 
     public static final class Builder {
