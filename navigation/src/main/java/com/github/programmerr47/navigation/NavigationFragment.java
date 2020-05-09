@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -119,22 +120,34 @@ public abstract class NavigationFragment extends Fragment implements OnTabSelect
 
             try {
                 View overflowView = NavigationToolbar.findOverflowView(toolbar);
-                overflowView.setOnClickListener(
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                final OverFlowMenu overFlowMenu = OverFlowMenu.createDefaultMenu(toolbar.getContext(), navigationBuilder.menuRes);
-                                overFlowMenu.setOnMenuItemClickListener(new OverFlowMenu.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(int i) {
-                                        overFlowMenu.dismiss();
-                                        actions.onItemClick(i);
-                                    }
-                                })
-                                        .show(v);
-                            }
+                View.OnClickListener onClickListener = null;
+
+                if (overflowView.getParent() != null) {
+                    onClickListener = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final OverFlowMenu overFlowMenu = OverFlowMenu.createDefaultMenu(toolbar.getContext(), navigationBuilder.menuRes);
+                            overFlowMenu.setOnMenuItemClickListener(new OverFlowMenu.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(int i) {
+                                    overFlowMenu.dismiss();
+                                    actions.onItemClick(i);
+                                }
+                            })
+                                    .show(v);
                         }
-                );
+                    };
+                } else {
+                    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            actions.onItemClick(item.getItemId());
+                            return true;
+                        }
+                    });
+                }
+
+                overflowView.setOnClickListener(onClickListener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
